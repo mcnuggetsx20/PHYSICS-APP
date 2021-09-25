@@ -28,23 +28,33 @@ def dict_init():
     global list_of_coils
     global elements_dict
     elements_dict = dict()
+    ok = False
 
     for i in range(len(list_of_weights)):
         elements_dict.update({i : []})
 
     for i in range(len(list_of_coils)):
-        if list_of_coils[i][0] in list_of_weights:
-            temp = list_of_coils[i][0]
-            j = i
-            temp2 = 0
-        else:
-            temp = list_of_coils[i][1]
-            j = i
-            temp2 = 1
+        ok = False
+        if list_of_coils[i][0] in list_of_weights and list_of_coils[i][1] in list_of_weights:
+            for j in range(2):
+                idx = list_of_weights.index(list_of_coils[i][j])
+                elements_dict[idx].append([i, j])
 
-        if temp in list_of_weights:
-            idx = list_of_weights.index(temp)
-            elements_dict[idx].append([j,temp2])
+
+        else:
+            if list_of_coils[i][0] in list_of_weights:
+                temp = list_of_coils[i][0]
+                temp2 = 0
+            else:
+                temp = list_of_coils[i][1]
+                temp2 = 1
+            ok = True
+
+        if ok:
+            if temp in list_of_weights:
+                print('elo')
+                idx = list_of_weights.index(temp)
+                elements_dict[idx].append([i,temp2])
 
 def coil():
     pygame.quit()
@@ -99,12 +109,13 @@ def coil():
                     colored_coil += len(list_of_coils) * int(not colored_coil) -1
                 #print(event.key)
                 if event.key == pygame.K_SPACE:
+                    
                     if vibrations == False:
                         vibrations = True
                     else:
                         vibrations = False
 
-                if event.key == pygame.K_BACKSPACE:
+                '''if event.key == pygame.K_BACKSPACE:
                     list_of_coils.pop(colored_coil)
                     for i in elements_dict:
                         if len(elements_dict[i]) == 1 and elements_dict[i][0] == colored_coil:
@@ -112,7 +123,7 @@ def coil():
                             list_of_weights.pop(i)
                             list_of_weights_params.pop(i)
                     dict_init()
-                    colored_coil = max(colored_coil-1, 0)
+                    colored_coil = max(colored_coil-1, 0)'''
 
                 if pygame.key.get_pressed()[pygame.K_LCTRL] == 1:
                     if event.key == pygame.K_z:
@@ -121,10 +132,12 @@ def coil():
                             if to_delete[0] == 'c':
                                 del list_of_coils[-1]
                                 del list_of_added_items[-1]
+                                dict_init()
                             if to_delete[0] == 'w':
                                 del list_of_weights[-1]
+                                del list_of_weights_params[-1]
                                 del list_of_added_items[-1]
-
+                                dict_init()
                 if event.key == pygame.K_ESCAPE:
                     import menu
                     menu.menu()
@@ -175,7 +188,7 @@ def coil():
                         list_of_weights.append((x,y))
                         list_of_weights_params.append([(x,y), mass, [0, 0]])
                         list_of_added_items.append('w')
-                        elements_dict.update({len(list_of_weights)-1 : []})
+                        dict_init()
                 else:
                     if x>coil_square_coil_position[0] and y>coil_square_coil_position[1] and x<coil_square_coil_position[0]+coil_square_coil_size[0] and y<coil_square_coil_position[1]+coil_square_coil_size[1]:
                         if selected_box == 'coil':
@@ -226,18 +239,7 @@ def coil():
             ended_coil = False
             mousebutton_clicked = False
             actual_coil_draw = False
-
-            if coil_start_pos in list_of_weights:
-                temp2 = 0
-                temp = coil_start_pos
-            else:
-                temp2 = 1
-                temp = coil_end_pos
-
-            if temp in list_of_weights:
-                idx = list_of_weights.index(temp)
-                elements_dict[idx].append([len(list_of_coils)-1,temp2])
-        print(elements_dict)
+            dict_init()
         if vibrations:
             list_of_coils, list_of_weights_params = functions.moving_blocks(list_of_coils, list_of_weights_params, elements_dict, speed_multiplier, coil_screen_fps, gravitation)
         list_of_weights = []
@@ -273,4 +275,4 @@ def coil():
             print(i, elements_dict[i])'''
         pygame.display.update()
 
-coil()
+#coil()

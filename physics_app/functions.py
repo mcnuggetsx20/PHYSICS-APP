@@ -83,6 +83,7 @@ def a_t(A,k,m,t,fi):
     return a
 
 def moving_blocks(list_of_coils,list_of_weights,dict_of_connections,speed_multipler,fps,gravitation):
+    print(list_of_coils)
     list_of_keys = (list(dict_of_connections.keys()))
     new_list_of_coils = list_of_coils
     new_list_of_weights = list_of_weights
@@ -96,10 +97,8 @@ def moving_blocks(list_of_coils,list_of_weights,dict_of_connections,speed_multip
         list_of_connected_coils = dict_of_connections.get(weight_idx)
         force_vectors = []
         for coil in list_of_connected_coils:
-            '''print(dict_of_connections)
-            print(list_of_coils)
-            print(list_of_weights)
-            print(list_of_connected_coils)'''
+            
+
             coil_idx = coil[0]
             coil_start_pos_x = list_of_coils[coil_idx][0][0]
             coil_start_pos_y = list_of_coils[coil_idx][0][1]
@@ -109,7 +108,6 @@ def moving_blocks(list_of_coils,list_of_weights,dict_of_connections,speed_multip
             coil_k = list_of_coils[coil_idx][3]
             coil_lenght = ((coil_end_pos_x-coil_start_pos_x)**2+ (coil_end_pos_y-coil_start_pos_y)**2)**0.5
             f = coil_k * (coil_lenght-coil_base_lenght)
-            #print(coil_lenght-coil_base_lenght)
             
             if coil[1] == 0:
                 vector_start_pos = (coil_start_pos_x,coil_start_pos_y)
@@ -117,7 +115,6 @@ def moving_blocks(list_of_coils,list_of_weights,dict_of_connections,speed_multip
             elif coil[1] == 1:
                 vector_start_pos = (coil_end_pos_x,coil_end_pos_y)
                 vector_end_pos = circle_line((coil_end_pos_x,coil_end_pos_y),(coil_start_pos_x,coil_start_pos_y),f)
-                
             force_vectors.append([vector_start_pos,vector_end_pos])
         force_vectors.append([(weight_pos_x,weight_pos_y),(weight_pos_x,weight_pos_y+weight_mass*gravitation)])
         result_vector = [0,0]
@@ -126,20 +123,24 @@ def moving_blocks(list_of_coils,list_of_weights,dict_of_connections,speed_multip
             result_vector[1] += j[1][1]-j[0][1]
         vector_value = (result_vector[0]**2+result_vector[1]**2)**0.5
         delta_v = (vector_value/weight_mass)*(1/fps)
-        #print(result_vector)
         vector_v = circle_line((weight_pos_x,weight_pos_y),(weight_pos_x+int(result_vector[0]),weight_pos_y+int(result_vector[1])),delta_v*speed_multipler)
-
+        
         weight_velocity_vector[0]+=vector_v[0]-weight_pos_x
         weight_velocity_vector[1]+=vector_v[1]-weight_pos_y
         x_result_pos = weight_velocity_vector[0]/fps
         y_result_pos = weight_velocity_vector[1]/fps
+
         result_pos = (weight_pos_x+x_result_pos,weight_pos_y+y_result_pos)
         new_list_of_weights[weight_idx][0] = result_pos
+        
         for coil in list_of_connected_coils:
-            if coil[0] == 0:
+            print(coil)
+            if coil[1] == 1:
                 new_list_of_coils[coil[0]][1] = result_pos
             else:
                 new_list_of_coils[coil[0]][0] = result_pos
+    print(new_list_of_coils)
+    print("---")
     return(new_list_of_coils,new_list_of_weights)
 
 
