@@ -16,6 +16,8 @@ def circle_line(start_pos,end_pos, lenght_of_first_line):
         a_parameter = (y2-y1)/(x2-x1)
         b_parameter = y1-a_parameter*x1
         delta = (2*a_parameter*b_parameter-2*x1-2*y1*a_parameter)**2-4*(1+a_parameter**2)*(x1**2+b_parameter**2+y1**2-2*y1*b_parameter-r**2)
+        if delta<0:
+            delta = 0
         delta_sqrt = math.sqrt(delta)
         x2_solved1 = (-(2*a_parameter*b_parameter-2*x1-2*y1*a_parameter)+delta_sqrt)/(2*(1+a_parameter**2))
         x2_solved2 = (-(2*a_parameter*b_parameter-2*x1-2*y1*a_parameter)-delta_sqrt)/(2*(1+a_parameter**2))
@@ -94,6 +96,10 @@ def moving_blocks(list_of_coils,list_of_weights,dict_of_connections,speed_multip
         list_of_connected_coils = dict_of_connections.get(weight_idx)
         force_vectors = []
         for coil in list_of_connected_coils:
+            '''print(dict_of_connections)
+            print(list_of_coils)
+            print(list_of_weights)
+            print(list_of_connected_coils)'''
             coil_idx = coil[0]
             coil_start_pos_x = list_of_coils[coil_idx][0][0]
             coil_start_pos_y = list_of_coils[coil_idx][0][1]

@@ -74,8 +74,8 @@ image_coil_coil = pygame.transform.scale(image_coil_coil,coil_square_coil_size)
 
 #yooo
 amplitude = 200
-elastic_idx = 400
-mass = 4
+elastic_idx = 4
+mass = 100
 phase = 0
-speed_multiplier = 10
+speed_multiplier = 40
 gravitation = 10

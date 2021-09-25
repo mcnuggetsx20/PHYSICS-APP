@@ -36,13 +36,15 @@ def dict_init():
         if list_of_coils[i][0] in list_of_weights:
             temp = list_of_coils[i][0]
             j = i
+            temp2 = 0
         else:
             temp = list_of_coils[i][1]
             j = i
+            temp2 = 1
 
         if temp in list_of_weights:
             idx = list_of_weights.index(temp)
-            elements_dict[idx].append(j)
+            elements_dict[idx].append([j,temp2])
 
 def coil():
     pygame.quit()
@@ -219,33 +221,39 @@ def coil():
         if ended_coil == True:
             coil_actual_start_pos = (0,0)
             coil_actual_end_pos = (0,0)
-            list_of_coils.append([coil_start_pos, coil_end_pos, 0, 0])
+            length = ((coil_end_pos[0]-coil_start_pos[0])**2 + (coil_end_pos[1]-coil_start_pos[1])**2)**0.5
+            list_of_coils.append([coil_start_pos, coil_end_pos, length, elastic_idx])
             ended_coil = False
             mousebutton_clicked = False
             actual_coil_draw = False
 
             if coil_start_pos in list_of_weights:
+                temp2 = 0
                 temp = coil_start_pos
             else:
+                temp2 = 1
                 temp = coil_end_pos
 
             if temp in list_of_weights:
                 idx = list_of_weights.index(temp)
-                elements_dict[idx].append(len(list_of_coils)-1)
-
-        list_of_coils, list_of_weights_params = functions.moving_blocks(list_of_coils, list_of_weights_params, elements_dict, speed_multiplier, coil_screen_fps, gravitation)
+                elements_dict[idx].append([len(list_of_coils)-1,temp2])
+        print(elements_dict)
+        if vibrations:
+            list_of_coils, list_of_weights_params = functions.moving_blocks(list_of_coils, list_of_weights_params, elements_dict, speed_multiplier, coil_screen_fps, gravitation)
+        list_of_weights = []
+        for i in list_of_weights_params:
+            list_of_weights.append(i[0])
         #drawing coils
         for coil_idx in list_of_coils:
-            functions.draw_coil(screen,coil_idx[0], coil_idx[1], coil_coil_line_width,coil_coil_lenght_of_first_line, coil_coil_number_of_links,coil_coil_link_radius,coil_coil_link_width, color)
+            functions.draw_coil(screen,coil_idx[0], coil_idx[1], coil_coil_line_width,coil_coil_lenght_of_first_line, coil_coil_number_of_links,coil_coil_link_radius,coil_coil_link_width, color_coil_coil)
         if actual_coil_draw == True:
             functions.draw_coil(screen,coil_actual_start_pos,coil_actual_end_pos,coil_coil_line_width,coil_coil_lenght_of_first_line,coil_coil_number_of_links,coil_coil_link_radius,coil_coil_link_width, color_coil_coil)
-
 
         #print(coil_actual_end_pos)
 
         #drawing screen (first boxes behind small boxes on left side)
-        for weight in list_of_weights:
-            pygame.draw.circle(screen,color_coil_weight,(weight[0],weight[1]),coil_weight_radius)
+        for weight in list_of_weights_params:
+            pygame.draw.circle(screen,color_coil_weight,(weight[0][0],weight[0][1]),coil_weight_radius)
         pygame.draw.rect(screen,color_coil_rect,(coil_rect_start_position,coil_rect_size))
         if selected_box == "coil":
             pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_coil_position[0]-coil_square_frame,coil_square_coil_position[1]-coil_square_frame,coil_square_coil_size[0]+2*coil_square_frame,coil_square_coil_size[1]+2*coil_square_frame))
@@ -263,7 +271,6 @@ def coil():
         time += 1 / coil_screen_fps
         '''for i in elements_dict:
             print(i, elements_dict[i])'''
-        print(list_of_weights_params)
         pygame.display.update()
 
 coil()
