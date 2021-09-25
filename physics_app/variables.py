@@ -36,6 +36,10 @@ coil_square_coil_position = (10,10)
 coil_square_coil_size = (80,80)
 coil_square_frame = 8
 coil_weight_radius = 25
+coil_start_pos = (0,0)
+coil_end_pos = (0,0)
+coil_actual_start_pos = (0,0)
+coil_actual_end_pos = (0,0)
 
 
 #word "menu"
@@ -73,3 +77,5 @@ amplitude = 200
 elastic_idx = 400
 mass = 4
 phase = 0
+speed_multiplier = 10
+gravitation = 10
