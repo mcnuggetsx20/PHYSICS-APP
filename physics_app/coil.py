@@ -1,3 +1,4 @@
+from math import pi
 from types import coroutine
 import pygame
 import sys
@@ -13,6 +14,7 @@ mousebutton_clicked = False
 ended_coil = False
 selected_box = False
 vibrations = False
+sinus_box = False
 to_delete = []
 list_of_added_items = []
 time = 0
@@ -22,6 +24,7 @@ list_of_weights = []
 list_of_weights_params = []
 elements_dict = dict()
 del_idx = 0
+pixels_to_draw = []
 
 def dict_init():
     global list_of_weights  
@@ -62,6 +65,7 @@ def coil():
     screen = pygame.display.set_mode(resolution_main)
     clock = pygame.time.Clock()
 
+    global sinus_box
     global coil_start_pos
     global coil_end_pos
     global coil_actual_start_pos
@@ -137,6 +141,7 @@ def coil():
                                 del list_of_weights[-1]
                                 del list_of_weights_params[-1]
                                 del list_of_added_items[-1]
+                                del pixels_to_draw[-1]
                                 dict_init()
                 if event.key == pygame.K_ESCAPE:
                     import menu
@@ -187,6 +192,7 @@ def coil():
 
                         list_of_weights.append((x,y))
                         list_of_weights_params.append([(x,y), mass, [0, 0]])
+                        pixels_to_draw.append([])
                         list_of_added_items.append('w')
                         dict_init()
                 else:
@@ -200,6 +206,11 @@ def coil():
                             selected_box = False
                         else:
                             selected_box = 'weight'
+                    if x>coil_square_sinus_position[0] and y>coil_square_sinus_position[1] and x<coil_square_sinus_position[0]+coil_square_sinus_size[0] and y<coil_square_sinus_position[1]+coil_square_sinus_size[1]:
+                        if sinus_box:
+                            sinus_box = False
+                        else:
+                            sinus_box = True
             if mousebutton_clicked == True:
                 if event.type == pygame.MOUSEMOTION:
                     x = event.pos[0]
@@ -245,6 +256,26 @@ def coil():
         list_of_weights = []
         for i in list_of_weights_params:
             list_of_weights.append(i[0])
+
+        #drawing line 
+
+        if vibrations:
+            
+            for i in range (len(list_of_weights)):
+                pixels_to_draw[i].append([list_of_weights[i][0],list_of_weights[i][1]])
+            for i in range (len(pixels_to_draw)):
+                for j in range (len(pixels_to_draw[i])):
+                        pixels_to_draw[i][j][0] += 1
+
+        if sinus_box:
+            for i in range (len(pixels_to_draw)):
+                for j in range (len(pixels_to_draw[i])-1):
+                    pygame.draw.line(screen,(0,0,0),pixels_to_draw[i][j],pixels_to_draw[i][j+1],4)
+        else:
+            for i in range (len(pixels_to_draw)):
+                pixels_to_draw[i] = []
+
+
         #drawing coils
         for coil_idx in list_of_coils:
             functions.draw_coil(screen,coil_idx[0], coil_idx[1], coil_coil_line_width,coil_coil_lenght_of_first_line, coil_coil_number_of_links,coil_coil_link_radius,coil_coil_link_width, color_coil_coil)
@@ -261,10 +292,14 @@ def coil():
             pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_coil_position[0]-coil_square_frame,coil_square_coil_position[1]-coil_square_frame,coil_square_coil_size[0]+2*coil_square_frame,coil_square_coil_size[1]+2*coil_square_frame))
         if selected_box == "weight":
             pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_weight_position[0]-coil_square_frame,coil_square_weight_position[1]-coil_square_frame,coil_square_weight_size[0]+2*coil_square_frame,coil_square_weight_size[1]+2*coil_square_frame))
+        if sinus_box:
+            pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_sinus_position[0]-coil_square_frame,coil_square_sinus_position[1]-coil_square_frame,coil_square_sinus_size[0]+2*coil_square_frame,coil_square_sinus_size[1]+2*coil_square_frame))
         pygame.draw.rect(screen,color_coil_square,(coil_square_weight_position,coil_square_weight_size))
         pygame.draw.rect(screen,color_coil_square,(coil_square_coil_position,coil_square_coil_size))
+        pygame.draw.rect(screen,color_coil_square,(coil_square_sinus_position,coil_square_sinus_size))
         screen.blit(image_coil_weight,(coil_square_weight_position))
         screen.blit(image_coil_coil,(coil_square_coil_position))
+        screen.blit(image_coil_sinus,(coil_square_sinus_position))
 
 
 

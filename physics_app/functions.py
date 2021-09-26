@@ -83,7 +83,7 @@ def a_t(A,k,m,t,fi):
     return a
 
 def moving_blocks(list_of_coils,list_of_weights,dict_of_connections,speed_multipler,fps,gravitation):
-    print(list_of_coils)
+    #print(list_of_coils)
     list_of_keys = (list(dict_of_connections.keys()))
     new_list_of_coils = list_of_coils
     new_list_of_weights = list_of_weights
@@ -117,6 +117,7 @@ def moving_blocks(list_of_coils,list_of_weights,dict_of_connections,speed_multip
                 vector_end_pos = circle_line((coil_end_pos_x,coil_end_pos_y),(coil_start_pos_x,coil_start_pos_y),f)
             force_vectors.append([vector_start_pos,vector_end_pos])
         force_vectors.append([(weight_pos_x,weight_pos_y),(weight_pos_x,weight_pos_y+weight_mass*gravitation)])
+        #print(force_vectors)
         result_vector = [0,0]
         for j in force_vectors:
             result_vector[0] += j[1][0]-j[0][0]
@@ -134,13 +135,12 @@ def moving_blocks(list_of_coils,list_of_weights,dict_of_connections,speed_multip
         new_list_of_weights[weight_idx][0] = result_pos
         
         for coil in list_of_connected_coils:
-            print(coil)
+            #print(coil)
             if coil[1] == 1:
                 new_list_of_coils[coil[0]][1] = result_pos
             else:
                 new_list_of_coils[coil[0]][0] = result_pos
-    print(new_list_of_coils)
-    print("---")
+    #print(new_list_of_coils)
     return(new_list_of_coils,new_list_of_weights)
 
 
