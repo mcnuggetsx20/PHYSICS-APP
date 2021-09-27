@@ -4,6 +4,7 @@ import pygame
 import sys
 from variables import *
 import functions
+import datetime
 
 coil_start_pos = (0,0)
 coil_end_pos = (0,0)
@@ -65,6 +66,7 @@ def coil():
     screen = pygame.display.set_mode(resolution_main)
     clock = pygame.time.Clock()
 
+    global precision
     global sinus_box
     global coil_start_pos
     global coil_end_pos
@@ -87,6 +89,7 @@ def coil():
     #coil loop
 
     while True:
+        now = datetime.datetime.now()
         shift_pressed = False
         #drawing background
         screen.blit(image_coil_background,(0,0))
@@ -252,7 +255,9 @@ def coil():
             actual_coil_draw = False
             dict_init()
         if vibrations:
-            list_of_coils, list_of_weights_params = functions.moving_blocks(list_of_coils, list_of_weights_params, elements_dict, speed_multiplier, coil_screen_fps, gravitation)
+            for i in range (0,precision):
+                list_of_coils, list_of_weights_params = functions.moving_blocks(list_of_coils, list_of_weights_params, elements_dict, speed_multiplier, coil_screen_fps*precision, gravitation)
+
         list_of_weights = []
         for i in list_of_weights_params:
             list_of_weights.append(i[0])
@@ -304,10 +309,14 @@ def coil():
 
 
 
-        clock.tick(coil_screen_fps)
+        
         time += 1 / coil_screen_fps
         '''for i in elements_dict:
             print(i, elements_dict[i])'''
         pygame.display.update()
-
+        after = datetime.datetime.now()
+        a = (now.microsecond)
+        b = (after.microsecond)
+        clock.tick(coil_screen_fps)
+        print (b-a)
 #coil()

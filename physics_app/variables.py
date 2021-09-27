@@ -82,3 +82,4 @@ mass = 50
 phase = 0
 speed_multiplier = 50
 gravitation = 10
+precision = 100 # 1=normal speed, if bigger precision is bigger but performance if much lower
