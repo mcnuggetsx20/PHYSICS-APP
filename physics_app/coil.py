@@ -19,7 +19,7 @@ sinus_box = False
 to_delete = []
 list_of_added_items = []
 time = 0
-colored_coil = 0
+colored_object = 0
 list_of_coils = []
 list_of_weights = []
 list_of_weights_params = []
@@ -80,12 +80,13 @@ def coil():
     global to_delete
     global list_of_added_items
     global time
-    global colored_coil
+    global colored_object
     global list_of_coils
     global list_of_weights
     global list_of_weights_params
     global elements_dict
     global del_idx
+    global color_coil_weight_red
     #coil loop
 
     while True:
@@ -111,9 +112,15 @@ def coil():
                 sys.exit(0)
             if event.type == pygame.KEYDOWN:
                 if event.key == 1073741903: #right arrow
-                    colored_coil += -1 * (len(list_of_coils)) * int(colored_coil == len(list_of_coils)-1) + 1
+                    if colored_object >= len(list_of_added_items)-1:
+                        colored_object = 0
+                    else:
+                        colored_object += 1
                 elif event.key == 1073741904: #right arrow
-                    colored_coil += len(list_of_coils) * int(not colored_coil) -1
+                    if colored_object <= 0:
+                        colored_object = len(list_of_added_items)-1
+                    else:
+                        colored_object -=1
                 #print(event.key)
                 if event.key == pygame.K_SPACE:
                     
@@ -136,6 +143,11 @@ def coil():
                     if event.key == pygame.K_z:
                         if len(list_of_added_items)>0:
                             to_delete = list_of_added_items[-1]
+                            if len(list_of_added_items)-1 == colored_object:
+                                if len(list_of_added_items)>1:
+                                    colored_object -= 1
+                                else:
+                                    colored_object = 0
                             if to_delete[0] == 'c':
                                 del list_of_coils[-1]
                                 del list_of_added_items[-1]
@@ -195,6 +207,8 @@ def coil():
 
                         list_of_weights.append((x,y))
                         list_of_weights_params.append([(x,y), mass, [0, 0]])
+                        if len(list_of_added_items)>=1:
+                            colored_object += 1
                         pixels_to_draw.append([])
                         list_of_added_items.append('w')
                         dict_init()
@@ -250,6 +264,8 @@ def coil():
             coil_actual_end_pos = (0,0)
             length = ((coil_end_pos[0]-coil_start_pos[0])**2 + (coil_end_pos[1]-coil_start_pos[1])**2)**0.5
             list_of_coils.append([coil_start_pos, coil_end_pos, length, elastic_idx])
+            if len(list_of_added_items)>=1:
+                colored_object += 1
             ended_coil = False
             mousebutton_clicked = False
             actual_coil_draw = False
@@ -286,12 +302,29 @@ def coil():
             functions.draw_coil(screen,coil_idx[0], coil_idx[1], coil_coil_line_width,coil_coil_lenght_of_first_line, coil_coil_number_of_links,coil_coil_link_radius,coil_coil_link_width, color_coil_coil)
         if actual_coil_draw == True:
             functions.draw_coil(screen,coil_actual_start_pos,coil_actual_end_pos,coil_coil_line_width,coil_coil_lenght_of_first_line,coil_coil_number_of_links,coil_coil_link_radius,coil_coil_link_width, color_coil_coil)
-
+        
+        #drawing colored coil
+        if len(list_of_added_items)>0 and not vibrations:
+            if list_of_added_items[colored_object] == 'c':
+                n=0
+                for i in range (0, colored_object):
+                    if list_of_added_items[i] == 'c':
+                        n+=1
+                functions.draw_coil(screen,list_of_coils[n][0], list_of_coils[n][1], coil_coil_line_width,coil_coil_lenght_of_first_line, coil_coil_number_of_links,coil_coil_link_radius,coil_coil_link_width, color_coil_coil_red)
         #print(coil_actual_end_pos)
 
         #drawing screen (first boxes behind small boxes on left side)
         for weight in list_of_weights_params:
             pygame.draw.circle(screen,color_coil_weight,(weight[0][0],weight[0][1]),coil_weight_radius)
+        
+        #drawing colored weight
+        if len(list_of_added_items)>0 and not vibrations:
+            if list_of_added_items[colored_object] == 'w':
+                n=0
+                for i in range (0, colored_object):
+                    if list_of_added_items[i] == 'w':
+                        n+=1
+                pygame.draw.circle(screen,color_coil_weight_red,list_of_weights[n],coil_weight_radius)
         pygame.draw.rect(screen,color_coil_rect,(coil_rect_start_position,coil_rect_size))
         if selected_box == "coil":
             pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_coil_position[0]-coil_square_frame,coil_square_coil_position[1]-coil_square_frame,coil_square_coil_size[0]+2*coil_square_frame,coil_square_coil_size[1]+2*coil_square_frame))
@@ -318,5 +351,5 @@ def coil():
         a = (now.microsecond)
         b = (after.microsecond)
         clock.tick(coil_screen_fps)
-        print (b-a)
+        #print (b-a)
 #coil()

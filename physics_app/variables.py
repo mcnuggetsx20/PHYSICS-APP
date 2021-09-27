@@ -18,6 +18,7 @@ color_coil_coil_red = (200, 104, 104)
 color_coil_square = (255,225,100)
 color_coil_bigsquare = (245, 144, 66)
 color_coil_weight = (69, 71, 71)
+color_coil_weight_red = (200, 104, 104)
 
 #coil variables
 coil_screen_fps = 60
