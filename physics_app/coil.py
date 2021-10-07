@@ -6,6 +6,9 @@ from variables import *
 import functions
 import datetime
 
+exists = 0
+pull_start_pos_x = 0
+pull_start_pos_y = 0
 coil_start_pos = (0,0)
 coil_end_pos = (0,0)
 coil_actual_start_pos = (0,0)
@@ -56,7 +59,6 @@ def dict_init():
 
         if ok:
             if temp in list_of_weights:
-                print('elo')
                 idx = list_of_weights.index(temp)
                 elements_dict[idx].append([i,temp2])
 
@@ -66,6 +68,9 @@ def coil():
     screen = pygame.display.set_mode(resolution_main)
     clock = pygame.time.Clock()
 
+    global exists
+    global pull_start_pos_x
+    global pull_start_pos_y
     global precision
     global sinus_box
     global coil_start_pos
@@ -90,11 +95,17 @@ def coil():
     #coil loop
 
     while True:
+        print(len(list_of_coils))
+
         now = datetime.datetime.now()
         shift_pressed = False
-        #drawing background
-        screen.blit(image_coil_background,(0,0))
-
+        screen.fill(color_screen_main)
+        number_of_x_lines = int(resolution_main[0]/coil_space_between_lines)
+        number_of_y_lines = int(resolution_main[1]/coil_space_between_lines)
+        for i in range (1,number_of_x_lines):
+            pygame.draw.line(screen,color_coil_line,(i*coil_space_between_lines,0),(i*coil_space_between_lines,resolution_main[1]))
+        for i in range (1,number_of_y_lines):
+            pygame.draw.line(screen,color_coil_line,(0,i*coil_space_between_lines),(resolution_main[0],i*coil_space_between_lines))
 
 
 
@@ -168,6 +179,20 @@ def coil():
                 x = event.pos[0]
                 y = event.pos[1]
                 if x>coil_rect_width+coil_coil_link_radius:
+                    if selected_box == 'arrows':
+                        exists = 0
+                        pull_start_pos_x = event.pos[0]
+                        pull_start_pos_y = event.pos[1]
+                        smallest = [coil_weight_radius,0]
+                        for i in range (0, len(list_of_weights)):
+                            distance = functions.distance_between_points(pull_start_pos_x,pull_start_pos_y,list_of_weights[i][0],list_of_weights[i][1])
+                            if distance<= smallest[0]:
+                                smallest[1] = i
+                                exists = 1
+                        if exists == 1:
+                            pull_start_pos_x,pull_start_pos_y = list_of_weights[smallest[1]]
+                        mousebutton_clicked = True
+
                     if selected_box == 'coil':
                         coil_actual_start_pos = event.pos
                         coil_start_pos = event.pos
@@ -207,7 +232,7 @@ def coil():
 
                         list_of_weights.append((x,y))
                         list_of_weights_params.append([(x,y), mass, [0, 0]])
-                        if len(list_of_added_items)>=1:
+                        if len(list_of_added_items)>1:
                             colored_object += 1
                         pixels_to_draw.append([])
                         list_of_added_items.append('w')
@@ -228,15 +253,43 @@ def coil():
                             sinus_box = False
                         else:
                             sinus_box = True
+                    if x>coil_square_arrows_position[0] and y>coil_square_arrows_position[1] and x<coil_square_arrows_position[0] + coil_square_arrows_size[0] and y<coil_square_arrows_position[1] + coil_square_arrows_size[1]:
+                        if selected_box == 'arrows':
+                            selected_box = False
+                        else:
+                            selected_box = 'arrows'
             if mousebutton_clicked == True:
                 if event.type == pygame.MOUSEMOTION:
                     x = event.pos[0]
                     if x>coil_rect_width+coil_coil_link_radius:
                         actual_coil_draw = True
-                        coil_actual_end_pos = event.pos
+                        if selected_box == 'coil':
+                            coil_actual_end_pos = event.pos
+                        if selected_box == 'arrows':
+                            if exists:
+                                a = event.pos[0]
+                                b = event.pos[1]
+                                if shift_pressed:
+                                    a,b = functions.draw_straight_line(pull_start_pos_x,pull_start_pos_y,a,b)
+                                list_of_weights[smallest[1]] = (a,b)
+                                list_of_weights_params[smallest[1]][0] = (a,b)
+                                coils = (elements_dict.get(smallest[1]))
+                                for i in range (0,len(coils)):
+                                    list_of_coils[coils[i][0]][coils[i][1]] = (a,b)
+
+
+                                #jasny chuj
+
+
+                            '''pull_end_pos_x = event.pos[0]
+                            pull_end_pos_y = event.pos[1]'''
+                            
             if event.type == pygame.MOUSEBUTTONUP:
+                exists = 0
                 x = event.pos[0]
                 if x>coil_rect_width+coil_coil_link_radius:
+                        
+
                     if selected_box == 'coil':
                         coil_end_pos = event.pos
                         x = coil_end_pos[0]
@@ -264,7 +317,7 @@ def coil():
             coil_actual_end_pos = (0,0)
             length = ((coil_end_pos[0]-coil_start_pos[0])**2 + (coil_end_pos[1]-coil_start_pos[1])**2)**0.5
             list_of_coils.append([coil_start_pos, coil_end_pos, length, elastic_idx])
-            if len(list_of_added_items)>=1:
+            if len(list_of_added_items)>1:
                 colored_object += 1
             ended_coil = False
             mousebutton_clicked = False
@@ -330,15 +383,21 @@ def coil():
             pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_coil_position[0]-coil_square_frame,coil_square_coil_position[1]-coil_square_frame,coil_square_coil_size[0]+2*coil_square_frame,coil_square_coil_size[1]+2*coil_square_frame))
         if selected_box == "weight":
             pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_weight_position[0]-coil_square_frame,coil_square_weight_position[1]-coil_square_frame,coil_square_weight_size[0]+2*coil_square_frame,coil_square_weight_size[1]+2*coil_square_frame))
+        if selected_box == "arrows":
+            pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_arrows_position[0]-coil_square_frame,coil_square_arrows_position[1]-coil_square_frame,coil_square_arrows_size[0]+2*coil_square_frame,coil_square_arrows_size[1]+2*coil_square_frame))
         if sinus_box:
             pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_sinus_position[0]-coil_square_frame,coil_square_sinus_position[1]-coil_square_frame,coil_square_sinus_size[0]+2*coil_square_frame,coil_square_sinus_size[1]+2*coil_square_frame))
         pygame.draw.rect(screen,color_coil_square,(coil_square_weight_position,coil_square_weight_size))
         pygame.draw.rect(screen,color_coil_square,(coil_square_coil_position,coil_square_coil_size))
         pygame.draw.rect(screen,color_coil_square,(coil_square_sinus_position,coil_square_sinus_size))
+        pygame.draw.rect(screen,color_coil_square,(coil_square_arrows_position,coil_square_arrows_size))
         screen.blit(image_coil_weight,(coil_square_weight_position))
         screen.blit(image_coil_coil,(coil_square_coil_position))
         screen.blit(image_coil_sinus,(coil_square_sinus_position))
+        screen.blit(image_coil_arrows,(coil_square_arrows_position)) 
 
+
+        #pygame.draw.line(screen, (0,0,0),(pull_start_pos_x,pull_start_pos_y),(pull_end_pos_x,pull_end_pos_y),5)
 
 
 

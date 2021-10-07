@@ -19,6 +19,8 @@ color_coil_square = (255,225,100)
 color_coil_bigsquare = (245, 144, 66)
 color_coil_weight = (69, 71, 71)
 color_coil_weight_red = (200, 104, 104)
+color_coil_line = (0,0,0)
+color_screen_main = (255,255,255)
 
 #coil variables
 coil_screen_fps = 60
@@ -31,11 +33,14 @@ coil_rect_size = (coil_rect_width,coil_rect_height)
 coil_coil_number_of_links = 30
 coil_coil_link_radius = 15
 coil_coil_link_width = 2
+coil_space_between_lines = 40
+coil_square_arrows_size = (80,80)
+coil_square_arrows_position = (10,210)
 coil_square_weight_size = (80,80)
 coil_square_weight_position = (10,110)
 coil_square_coil_position = (10,10)
 coil_square_coil_size = (80,80)
-coil_square_sinus_position = (10,210)
+coil_square_sinus_position = (10,310)
 coil_square_sinus_size = (80,80)
 coil_square_frame = 8
 coil_weight_radius = 18
@@ -68,7 +73,6 @@ height_main = 700
 resolution_main = (width_main,height_main)
 
 #images
-image_coil_background = pygame.image.load('image_coil_background.png')
 image_menu_background = pygame.image.load('menu_background.jpg')
 image_coil_weight = pygame.image.load('weight.png')
 image_coil_weight = pygame.transform.scale(image_coil_weight,coil_square_weight_size)
@@ -76,11 +80,12 @@ image_coil_coil = pygame.image.load('coil.png')
 image_coil_coil = pygame.transform.scale(image_coil_coil,coil_square_coil_size)
 image_coil_sinus = pygame.image.load('sinus.png')
 image_coil_sinus = pygame.transform.scale(image_coil_sinus,coil_square_sinus_size)
-
+image_coil_arrows = pygame.image.load('arrows.png')
+image_coil_arrows = pygame.transform.scale(image_coil_arrows,coil_square_arrows_size)
 #yooo
 elastic_idx = 15
 mass = 50
 phase = 0
 speed_multiplier = 50
 gravitation = 10
-precision = 100 # 1=normal speed, if bigger precision is bigger but performance if much lower
+precision = 1 # 1=normal speed, if bigger precision is bigger but performance if much lower
