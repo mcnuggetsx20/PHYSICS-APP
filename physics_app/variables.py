@@ -86,10 +86,9 @@ image_coil_arrows = pygame.image.load('arrows.png')
 image_coil_arrows = pygame.transform.scale(image_coil_arrows,coil_square_arrows_size)
 image_coil_gravity = pygame.image.load('gravity.png')
 image_coil_gravity = pygame.transform.scale(image_coil_gravity, coil_square_gravity_size)
-#yooo
+#physical variables
 elastic_idx = 15
 mass = 50
-phase = 0
 speed_multiplier = 50
 base_gravitation = 10
 precision = 100 # 1=normal speed, if bigger precision is bigger but performance if much lower

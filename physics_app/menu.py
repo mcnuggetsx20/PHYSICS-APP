@@ -45,5 +45,4 @@ def menu():
         clock.tick(variables.coil_screen_fps)
         pygame.display.update()
 
-
 menu()
