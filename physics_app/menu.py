@@ -8,6 +8,8 @@ def menu():
     if pygame.get_init != True:
         pygame.quit()
     pygame.__init__
+    pygame.display.set_caption('FIZYKA')
+    pygame.display.set_caption('SPRĘŻYNA')
     screen = pygame.display.set_mode(variables.resolution_menu)
     where_mouse = ''
     clock = pygame.time.Clock()

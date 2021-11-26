@@ -28,7 +28,10 @@ list_of_weights = []
 list_of_weights_params = []
 elements_dict = dict()
 del_idx = 0
+too_big = []
 pixels_to_draw = []
+mx=0
+my=0
 
 def dict_init():
     global list_of_weights  
@@ -347,13 +350,20 @@ def coil():
             
             for i in range (len(list_of_weights)):
                 pixels_to_draw[i].append([list_of_weights[i][0],list_of_weights[i][1]])
+            too_big = []
             for i in range (len(pixels_to_draw)):
                 for j in range (len(pixels_to_draw[i])):
-                        pixels_to_draw[i][j][0] += 1
+                    pixels_to_draw[i][j][0] += 1
+                    if(pixels_to_draw[i][j][0] > width_main):
+                        too_big.append((i,j))
+                for j in too_big:
+                    pixels_to_draw[j[0]].pop(j[1])
+
 
         if sinus_box:
             for i in range (len(pixels_to_draw)):
                 for j in range (len(pixels_to_draw[i])-1):
+                    print(pixels_to_draw)
                     pygame.draw.line(screen,(0,0,0),pixels_to_draw[i][j],pixels_to_draw[i][j+1],4)
         else:
             for i in range (len(pixels_to_draw)):
