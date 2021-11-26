@@ -2,6 +2,8 @@ import variables
 import coil
 import pygame
 import sys
+
+
 def menu():
     if pygame.get_init != True:
         pygame.quit()
@@ -9,19 +11,23 @@ def menu():
     screen = pygame.display.set_mode(variables.resolution_menu)
     where_mouse = ''
     clock = pygame.time.Clock()
-    #main menu loop
+    # main menu loop
     while True:
 
-        #drawing
-        screen.blit(variables.image_menu_background,(0,0))
+        # drawing
+        screen.blit(variables.image_menu_background, (0, 0))
         if where_mouse == 'coil':
-            pygame.draw.rect(screen,variables.color_highlighted_rect,(variables.menu_coil_highlighted_rect_position, variables.menu_coil_highlighted_rect_size))
-        pygame.draw.rect(screen,variables.color_rect,(variables.menu_coil_rect_position, variables.menu_coil_rect_size))
+            pygame.draw.rect(screen, variables.color_highlighted_rect, (
+                variables.menu_coil_highlighted_rect_position, variables.menu_coil_highlighted_rect_size))
+        pygame.draw.rect(screen, variables.color_rect,
+                         (variables.menu_coil_rect_position, variables.menu_coil_rect_size))
 
-        screen.blit(variables.text_menu_menu,variables.menu_menu_word_position)
-        screen.blit(variables.text_menu_coil,variables.menu_coil_word_position)
-    
-        #collecting events
+        screen.blit(variables.text_menu_menu,
+                    variables.menu_menu_word_position)
+        screen.blit(variables.text_menu_coil,
+                    variables.menu_coil_word_position)
+
+        # collecting events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit(0)
@@ -38,6 +44,6 @@ def menu():
                     coil.coil()
         clock.tick(variables.coil_screen_fps)
         pygame.display.update()
-        
+
 
 menu()

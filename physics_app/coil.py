@@ -19,6 +19,7 @@ ended_coil = False
 selected_box = False
 vibrations = False
 sinus_box = False
+gravity_box = False
 to_delete = []
 list_of_added_items = []
 time = 0
@@ -73,6 +74,7 @@ def coil():
     global pull_start_pos_y
     global precision
     global sinus_box
+    global gravity_box
     global coil_start_pos
     global coil_end_pos
     global coil_actual_start_pos
@@ -95,7 +97,6 @@ def coil():
     #coil loop
 
     while True:
-        print(len(list_of_coils))
 
         now = datetime.datetime.now()
         shift_pressed = False
@@ -117,8 +118,6 @@ def coil():
         if pygame.key.get_pressed()[pygame.K_LSHIFT] == 1:
             shift_pressed = True
         for event in pygame.event.get():
-
-
             if event.type == pygame.QUIT:
                 sys.exit(0)
             if event.type == pygame.KEYDOWN:
@@ -258,6 +257,11 @@ def coil():
                             selected_box = False
                         else:
                             selected_box = 'arrows'
+                    if x>coil_square_gravity_position[0] and y>coil_square_gravity_position[1] and x<coil_square_gravity_position[0]+coil_square_gravity_size[0] and y<coil_square_gravity_position[1]+coil_square_gravity_size[1]:
+                        if gravity_box:
+                            gravity_box = False
+                        else:
+                            gravity_box = True
             if mousebutton_clicked == True:
                 if event.type == pygame.MOUSEMOTION:
                     x = event.pos[0]
@@ -277,8 +281,6 @@ def coil():
                                 for i in range (0,len(coils)):
                                     list_of_coils[coils[i][0]][coils[i][1]] = (a,b)
 
-
-                                #jasny chuj
 
 
                             '''pull_end_pos_x = event.pos[0]
@@ -324,6 +326,10 @@ def coil():
             actual_coil_draw = False
             dict_init()
         if vibrations:
+            if gravity_box:
+                gravitation = base_gravitation
+            else:
+                gravitation = 0
             for i in range (0,precision):
                 list_of_coils, list_of_weights_params = functions.moving_blocks(list_of_coils, list_of_weights_params, elements_dict, speed_multiplier, coil_screen_fps*precision, gravitation)
 
@@ -387,14 +393,18 @@ def coil():
             pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_arrows_position[0]-coil_square_frame,coil_square_arrows_position[1]-coil_square_frame,coil_square_arrows_size[0]+2*coil_square_frame,coil_square_arrows_size[1]+2*coil_square_frame))
         if sinus_box:
             pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_sinus_position[0]-coil_square_frame,coil_square_sinus_position[1]-coil_square_frame,coil_square_sinus_size[0]+2*coil_square_frame,coil_square_sinus_size[1]+2*coil_square_frame))
+        if gravity_box:
+            pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_gravity_position[0]-coil_square_frame, coil_square_gravity_position[1]-coil_square_frame,coil_square_gravity_size[0]+2*coil_square_frame,coil_square_gravity_size[1]+2*coil_square_frame))
         pygame.draw.rect(screen,color_coil_square,(coil_square_weight_position,coil_square_weight_size))
         pygame.draw.rect(screen,color_coil_square,(coil_square_coil_position,coil_square_coil_size))
         pygame.draw.rect(screen,color_coil_square,(coil_square_sinus_position,coil_square_sinus_size))
         pygame.draw.rect(screen,color_coil_square,(coil_square_arrows_position,coil_square_arrows_size))
+        pygame.draw.rect(screen,color_coil_square,(coil_square_gravity_position,coil_square_gravity_size))
         screen.blit(image_coil_weight,(coil_square_weight_position))
         screen.blit(image_coil_coil,(coil_square_coil_position))
         screen.blit(image_coil_sinus,(coil_square_sinus_position))
         screen.blit(image_coil_arrows,(coil_square_arrows_position)) 
+        screen.blit(image_coil_gravity,(coil_square_gravity_position))
 
 
         #pygame.draw.line(screen, (0,0,0),(pull_start_pos_x,pull_start_pos_y),(pull_end_pos_x,pull_end_pos_y),5)
