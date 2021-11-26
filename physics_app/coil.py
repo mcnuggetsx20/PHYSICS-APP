@@ -1,5 +1,4 @@
-from math import pi
-from types import coroutine
+
 import pygame
 import sys
 from variables import *
@@ -19,7 +18,7 @@ ended_coil = False
 selected_box = False
 vibrations = False
 sinus_box = False
-gravity_box = False
+gravity_box = True
 to_delete = []
 list_of_added_items = []
 time = 0
@@ -262,6 +261,11 @@ def coil():
                             gravity_box = False
                         else:
                             gravity_box = True
+                    if x>coil_square_pause_position[0]-10 and y>coil_square_pause_position[1]-10 and x<coil_square_pause_position[0]+10+coil_square_pause_size[0] and y<coil_square_pause_position[1]+10+coil_square_pause_size[1]:
+                        if vibrations:
+                            vibrations = False
+                        else:
+                            vibrations = True                        
             if mousebutton_clicked == True:
                 if event.type == pygame.MOUSEMOTION:
                     x = event.pos[0]
@@ -395,6 +399,12 @@ def coil():
             pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_sinus_position[0]-coil_square_frame,coil_square_sinus_position[1]-coil_square_frame,coil_square_sinus_size[0]+2*coil_square_frame,coil_square_sinus_size[1]+2*coil_square_frame))
         if gravity_box:
             pygame.draw.rect(screen,color_coil_bigsquare, (coil_square_gravity_position[0]-coil_square_frame, coil_square_gravity_position[1]-coil_square_frame,coil_square_gravity_size[0]+2*coil_square_frame,coil_square_gravity_size[1]+2*coil_square_frame))
+        pygame.draw.rect(screen,color_coil_square, ((coil_square_pause_position[0]-10,coil_square_pause_position[1]-10),(coil_square_pause_size[0]+20,coil_square_pause_size[1]+20)))
+        if vibrations:
+            pygame.draw.rect(screen,color_coil_rect_pause, (coil_square_pause_position[0],coil_square_pause_position[1], coil_square_pause_size[0],coil_square_pause_size[1],))
+        else:
+            pygame.draw.polygon(screen,color_coil_triangle_run,[coil_square_pause_position,(coil_square_pause_position[0],coil_square_pause_position[1]+coil_square_pause_size[1]), (coil_square_pause_position[0]+coil_square_pause_size[0],coil_square_pause_position[1] + coil_square_pause_size[1]/2)])
+
         pygame.draw.rect(screen,color_coil_square,(coil_square_weight_position,coil_square_weight_size))
         pygame.draw.rect(screen,color_coil_square,(coil_square_coil_position,coil_square_coil_size))
         pygame.draw.rect(screen,color_coil_square,(coil_square_sinus_position,coil_square_sinus_size))
